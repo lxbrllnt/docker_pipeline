@@ -2,7 +2,9 @@ name: CI to Docker Hub
 
 on:
   push:
-    branches: [ master ]
+    # branches: [ master ]  # uncomment to push every commit on master to docker hub
+    tags:
+    - "v*.*.*"
 
 jobs:
 
@@ -32,6 +34,17 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/simplewhale:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+      
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: $${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+            

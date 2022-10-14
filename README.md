@@ -1,4 +1,3 @@
 # docker-whale
 
-# docker_pipeline testing
-# zwei
+docker pipeline testing
